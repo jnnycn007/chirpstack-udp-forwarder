@@ -1,7 +1,8 @@
 # hidden files
 .*
-!/.cargo
+!/.cargo/config.toml
 !/.github
+!.gitignore
 
 # rust buids / cache
 /target

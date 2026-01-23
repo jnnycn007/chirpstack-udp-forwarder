@@ -82,3 +82,7 @@ test:
 # Enter the devshell.
 devshell:
 	docker-compose run --rm chirpstack-udp-forwarder
+
+# Dependencies
+dev-dependencies:
+	cargo install cross --git https://github.com/cross-rs/cross --rev 452dc27a11d4f58d65309f8455c5cf7558f60513 --locked --root .cargo
