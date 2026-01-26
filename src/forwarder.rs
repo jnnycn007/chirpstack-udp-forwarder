@@ -20,6 +20,7 @@ struct State {
     forward_crc_invalid: bool,
     forward_crc_missing: bool,
     keepalive_max_failures: u32,
+    filters: lrwn_filters::Filters,
     gateway_id: Vec<u8>,
     socket: UdpSocket,
     push_data_token: Mutex<u16>,
@@ -121,10 +122,15 @@ pub fn start(conf: &Server, event_url: String, command_url: String, gateway_id: 
                 0 => time::Duration::from_secs(5),
                 _ => time::Duration::from_secs(conf.keepalive_interval_secs),
             },
-            forward_crc_ok: conf.forward_crc_ok,
-            forward_crc_invalid: conf.forward_crc_invalid,
-            forward_crc_missing: conf.forward_crc_missing,
+            forward_crc_ok: conf.filters.forward_crc_ok,
+            forward_crc_invalid: conf.filters.forward_crc_invalid,
+            forward_crc_missing: conf.filters.forward_crc_missing,
             keepalive_max_failures: conf.keepalive_max_failures,
+            filters: lrwn_filters::Filters {
+                dev_addr_prefixes: conf.filters.dev_addr_prefixes.clone(),
+                join_eui_prefixes: conf.filters.join_eui_prefixes.clone(),
+                lorawan_only: conf.filters.lorawan_only,
+            },
             gateway_id: gateway_id.clone(),
             push_data_token: Mutex::new(0),
             push_data_sent: Mutex::new(0),
@@ -377,9 +383,21 @@ fn events_up(state: &Arc<State>, up: chirpstack_api::gw::UplinkFrame) {
         && !((rx_info.crc_status() == gw::CrcStatus::CrcOk && state.forward_crc_ok)
             || (rx_info.crc_status() == gw::CrcStatus::BadCrc && state.forward_crc_invalid)
             || (rx_info.crc_status() == gw::CrcStatus::NoCrc && state.forward_crc_missing))
-        {
-            return;
-        }
+    {
+        debug!(
+            "Ignoring uplink frame because of forward_crc_ flags, uplink_id: {}",
+            rx_info.uplink_id,
+        );
+        return;
+    }
+
+    if !lrwn_filters::matches(&up.phy_payload, &state.filters) {
+        debug!(
+            "Ignoring uplink frame because of dev_addr and join_eui filters, uplink_id: {}",
+            up.rx_info.as_ref().map(|v| v.uplink_id).unwrap_or_default()
+        );
+        return;
+    }
 
     let rxpk = match structs::RxPk::from_proto(&up) {
         Ok(v) => v,

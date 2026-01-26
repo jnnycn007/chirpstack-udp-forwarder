@@ -52,14 +52,42 @@ Configuration example:
     # the server address is a hostname.
     keepalive_max_failures=12
 
-	# Forward CRC OK.
-	forward_crc_ok=true
+    # Filters.
+    [backend.filters]
 
-	# Forward CRC invalid.
-	forward_crc_invalid=false
+      # Forward CRC ok.
+      forward_crc_ok=true
 
-	# Forward CRC missing.
-	forward_crc_missing=false
+      # Forward CRC invalid.
+      forward_crc_invalid=false
+
+      # Forward CRC missing.
+      forward_crc_missing=false
+
+      # LoRaWAN only.
+      lorawan_only=false
+
+      # DevAddr prefix filters.
+      #
+      # Example configuration:
+      # dev_addr_prefixes=["0000ff00/24"]
+      #
+      # The above filter means that the 24MSB of 0000ff00 will be used to
+      # filter DevAddrs. Uplinks with DevAddrs that do not match any of the
+      # configured filters will not be forwarded. Leaving this option empty
+      # disables filtering on DevAddr.
+      dev_addr_prefixes=[]
+
+      # JoinEUI prefix filters.
+      #
+      # Example configuration:
+      # join_eui_prefixes=["0000ff0000000000/24"]
+      #
+      # The above filter means that the 24MSB of 0000ff0000000000 will be used
+      # to filter JoinEUIs. Uplinks with JoinEUIs that do not match any of the
+      # configured filters will not be forwarded. Leaving this option empty
+      # disables filtering on JoinEUI.
+      join_eui_prefixes=[]
 
 
 # Concentratord configuration.

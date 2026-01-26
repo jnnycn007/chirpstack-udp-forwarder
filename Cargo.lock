@@ -99,6 +99,7 @@ dependencies = [
  "getrandom",
  "hex",
  "log",
+ "lrwn_filters",
  "prometheus-client",
  "serde",
  "serde_json",
@@ -431,6 +432,17 @@ name = "log"
 version = "0.4.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
+
+[[package]]
+name = "lrwn_filters"
+version = "4.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0e1599bde88ddd0da660b9ccbe7cf45acee225396a0ad2455737b2d260d72e1"
+dependencies = [
+ "hex",
+ "serde",
+ "thiserror",
+]
 
 [[package]]
 name = "memchr"
