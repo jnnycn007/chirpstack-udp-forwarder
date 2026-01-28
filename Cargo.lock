@@ -89,7 +89,7 @@ checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 
 [[package]]
 name = "chirpstack-udp-forwarder"
-version = "4.2.1"
+version = "4.3.0"
 dependencies = [
  "anyhow",
  "base64",
